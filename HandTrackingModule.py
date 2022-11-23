@@ -47,6 +47,7 @@ class HandDetector:
         """
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(imgRGB)
+        print(self.results.multi_hand_landmarks)
         allHands = []
         h, w, c = img.shape
         if self.results.multi_hand_landmarks:
@@ -140,8 +141,8 @@ class HandDetector:
                  Line information
         """
 
-        x1, y1 = p1
-        x2, y2 = p2
+        x1, y1, _ = p1
+        x2, y2, _ = p2
         cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
         length = math.hypot(x2 - x1, y2 - y1)
         info = (x1, y1, x2, y2, cx, cy)
@@ -150,6 +151,8 @@ class HandDetector:
             cv2.circle(img, (x2, y2), 15, (255, 0, 255), cv2.FILLED)
             cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
             cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
+            cv2.putText(img, str(length), (cx-50, cy-50), cv2.FONT_HERSHEY_PLAIN,
+                                2, (255, 0, 255), 2)
             return length, info, img
         else:
             return length, info

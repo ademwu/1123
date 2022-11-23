@@ -1,13 +1,9 @@
-from HandTrackingModule import HandDetector
+# OpenCV與MediaPipe用於手部檢測與應用
+from cvzone.HandTrackingModule import HandDetector
 import cv2
-import pafy
 
-url='https://www.youtube.com/watch?v=_Ipa4pEMhh4'
-videoPafy = pafy.new(url)
-best = videoPafy.getbest()
-cap = cv2.VideoCapture(best.url)
-
-detector = PoseDetector()
+cap = cv2.VideoCapture(0)
+detector = HandDetector(detectionCon=0.8, maxHands=2)
 while True:
     # Get image frame
     success, img = cap.read()
@@ -22,10 +18,15 @@ while True:
         bbox1 = hand1["bbox"]  # Bounding box info x,y,w,h
         centerPoint1 = hand1['center']  # center of the hand cx,cy
         handType1 = hand1["type"]  # Handtype Left or Right
-
+        print(hand1)
         fingers1 = detector.fingersUp(hand1)
-        print(fingers1)
-
+        # print(fingers1)
+        if fingers1 == [0, 0, 0, 0, 0]:
+            print('rock')
+        if fingers1 == [1, 1, 1, 1, 1]:
+            print('paper')
+        if fingers1 == [0, 1, 1, 0, 0]:
+            print('scissors')
         if len(hands) == 2:
             # Hand 2
             hand2 = hands[1]
@@ -37,10 +38,13 @@ while True:
             fingers2 = detector.fingersUp(hand2)
 
             # Find Distance between two Landmarks. Could be same hand or different hands
-            length, info, img = detector.findDistance(lmList1[8], lmList2[8], img)  # with draw
+            length, info, img = detector.findDistance(
+                lmList1[8], lmList1[4], img)  # with draw
             # length, info = detector.findDistance(lmList1[8], lmList2[8])  # with draw
     # Display
     cv2.imshow("Image", img)
-    cv2.waitKey(1)
+    c = cv2.waitKey(1)
+    if c == 27:
+        break
 cap.release()
 cv2.destroyAllWindows()

@@ -1,13 +1,8 @@
 from HandTrackingModule import HandDetector
 import cv2
-import pafy
 
-url='https://www.youtube.com/watch?v=_Ipa4pEMhh4'
-videoPafy = pafy.new(url)
-best = videoPafy.getbest()
-cap = cv2.VideoCapture(best.url)
-
-detector = PoseDetector()
+cap = cv2.VideoCapture(0)
+detector = HandDetector(detectionCon=0.8, maxHands=2)
 while True:
     # Get image frame
     success, img = cap.read()
@@ -25,7 +20,6 @@ while True:
 
         fingers1 = detector.fingersUp(hand1)
         print(fingers1)
-
         if len(hands) == 2:
             # Hand 2
             hand2 = hands[1]
@@ -35,12 +29,11 @@ while True:
             handType2 = hand2["type"]  # Hand Type "Left" or "Right"
 
             fingers2 = detector.fingersUp(hand2)
-
+            print(lmList1[8])
             # Find Distance between two Landmarks. Could be same hand or different hands
             length, info, img = detector.findDistance(lmList1[8], lmList2[8], img)  # with draw
             # length, info = detector.findDistance(lmList1[8], lmList2[8])  # with draw
     # Display
     cv2.imshow("Image", img)
     cv2.waitKey(1)
-cap.release()
-cv2.destroyAllWindows()
+cv2.destroyWindow()
