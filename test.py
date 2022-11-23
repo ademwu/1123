@@ -19,6 +19,7 @@ while True:
         handType1 = hand1["type"]  # Handtype Left or Right
 
         fingers1 = detector.fingersUp(hand1)
+        print(fingers1)
 
         if len(hands) == 2:
             # Hand 2
